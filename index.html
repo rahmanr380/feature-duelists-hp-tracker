@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feature Duelists HP Tracker</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
+  .container { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+  input, select, button { width: 100%; padding: 10px; margin: 5px 0; font-size: 1rem; border-radius: 5px; border: 1px solid #ccc; }
+  .hp-bar { width: 100%; background: #ddd; border-radius: 5px; overflow: hidden; margin-top: 10px; }
+  .hp-fill { height: 25px; background: #4caf50; width: 100%; text-align: center; color: #fff; line-height: 25px; font-weight: bold; }
+  .undo-btn { background-color: #f44336; color: white; }
+  .quick-buttons { display: flex; justify-content: space-between; margin: 5px 0; }
+  .quick-buttons button { flex: 1; margin: 0 2px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Feature Duelists HP Tracker</h2>
+  <label>Current HP:</label>
+  <input type="number" id="currentHP" value="2000" min="0" max="2000">
+
+  <label>Attack Value:</label>
+  <select id="attackValue">
+    <option value="100">100</option>
+    <option value="200">200</option>
+    <option value="300">300</option>
+    <option value="400">400</option>
+    <option value="500">500</option>
+  </select>
+
+  <label>Modifier:</label>
+  <select id="modifier">
+    <option value="1">None</option>
+    <option value="1.2">+20%</option>
+    <option value="1.25">+25%</option>
+    <option value="1.5">+50%</option>
+  </select>
+
+  <div class="quick-buttons">
+    <button onclick="applyQuick(100,1)">100</button>
+    <button onclick="applyQuick(200,1)">200</button>
+    <button onclick="applyQuick(300,1)">300</button>
+    <button onclick="applyQuick(400,1)">400</button>
+    <button onclick="applyQuick(500,1)">500</button>
+  </div>
+
+  <button onclick="applyDamage()">Apply Damage</button>
+  <button class="undo-btn" onclick="undoDamage()">Undo</button>
+
+  <div class="hp-bar">
+    <div class="hp-fill" id="hpFill">2000 HP</div>
+  </div>
+</div>
+
+<script>
+let lastHP = 2000;
+let undoHP = 2000;
+let dangerTriggered = false;
+
+function roundTo5(num) {
+    return Math.round(num / 5) * 5;
+}
+
+function applyDamage() {
+    const currentHPInput = document.getElementById('currentHP');
+    const attack = parseFloat(document.getElementById('attackValue').value);
+    const modifier = parseFloat(document.getElementById('modifier').value);
+    undoHP = parseFloat(currentHPInput.value);
+    let damage = roundTo5(attack * modifier);
+    let newHP = undoHP - damage;
+    if (newHP < 0) newHP = 0;
+    lastHP = newHP;
+    currentHPInput.value = newHP;
+    updateBar(newHP);
+    checkWarnings(newHP);
+}
+
+function applyQuick(attackVal, mod) {
+    document.getElementById('attackValue').value = attackVal;
+    document.getElementById('modifier').value = mod;
+    applyDamage();
+}
+
+function undoDamage() {
+    const currentHPInput = document.getElementById('currentHP');
+    currentHPInput.value = undoHP;
+    updateBar(undoHP);
+    lastHP = undoHP;
+    checkWarnings(undoHP);
+}
+
+function updateBar(hp) {
+    const hpFill = document.getElementById('hpFill');
+    const percent = (hp / 2000) * 100;
+    hpFill.style.width = percent + '%';
+    hpFill.textContent = hp + ' HP';
+}
+
+function checkWarnings(hp) {
+    if (hp <= 0) {
+        alert('Game Over!');
+        dangerTriggered = false; // Reset danger for next game
+    } else if (hp <= 500 && !dangerTriggered) {
+        alert('Danger!');
+        dangerTriggered = true;
+    }
+}
+</script>
+</body>
+</html>
