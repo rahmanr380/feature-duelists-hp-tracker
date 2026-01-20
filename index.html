@@ -47,8 +47,7 @@
 </div>
 
 <script>
-let lastHP = 2000;
-let undoHP = 2000;
+let hpHistory = [2000]; // Stack to keep track of previous HP values
 let dangerTriggered = false;
 const totalHP = 2000;
 
@@ -59,23 +58,23 @@ function roundTo5(num) {
 function applyDamageModifier(baseValue) {
     const currentHPInput = document.getElementById('currentHP');
     const mod = document.getElementById('modifier').value;
-    undoHP = parseFloat(currentHPInput.value);
 
-    let newHP = undoHP;
+    let currentHP = parseFloat(currentHPInput.value);
+    hpHistory.push(currentHP); // Save current HP before applying change
+
+    let newHP = currentHP;
 
     if (mod === 'heal') {
-        newHP = undoHP + roundTo5(0.25 * totalHP);
+        newHP = currentHP + roundTo5(0.25 * totalHP);
         if (newHP > totalHP) newHP = totalHP;
     } else if (mod === 'normal') {
-        newHP = undoHP - roundTo5(baseValue);
+        newHP = currentHP - roundTo5(baseValue);
         if (newHP < 0) newHP = 0;
     } else {
-        // +20% or +50% Increased Damage is now additive on the base value
-        newHP = undoHP - roundTo5(baseValue + baseValue * parseFloat(mod));
+        newHP = currentHP - roundTo5(baseValue + baseValue * parseFloat(mod));
         if (newHP < 0) newHP = 0;
     }
 
-    lastHP = newHP;
     currentHPInput.value = newHP;
     updateBar(newHP);
     checkWarnings(newHP);
@@ -87,10 +86,15 @@ function applyQuickModifier(baseValue) {
 
 function undoDamage() {
     const currentHPInput = document.getElementById('currentHP');
-    currentHPInput.value = undoHP;
-    updateBar(undoHP);
-    lastHP = undoHP;
-    checkWarnings(undoHP);
+    if (hpHistory.length > 1) {
+        hpHistory.pop(); // Remove current HP
+        const lastHP = hpHistory[hpHistory.length - 1];
+        currentHPInput.value = lastHP;
+        updateBar(lastHP);
+        checkWarnings(lastHP);
+    } else {
+        alert('Nothing to undo!');
+    }
 }
 
 function updateBar(hp) {
