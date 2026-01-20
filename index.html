@@ -9,7 +9,7 @@
   .container { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
   input, select, button { width: 100%; padding: 10px; margin: 5px 0; font-size: 1rem; border-radius: 5px; border: 1px solid #ccc; }
   .hp-bar { width: 100%; background: #ddd; border-radius: 5px; overflow: hidden; margin-top: 10px; }
-  .hp-fill { height: 25px; background: #4caf50; width: 100%; text-align: center; color: #fff; line-height: 25px; font-weight: bold; }
+  .hp-fill { height: 25px; background: #4caf50; width: 100%; text-align: center; color: #fff; line-height: 25px; font-weight: bold; transition: background-color 0.3s; }
   .undo-btn { background-color: #f44336; color: white; }
   .quick-buttons { display: flex; justify-content: space-between; margin: 5px 0; }
   .quick-buttons button { flex: 1; margin: 0 2px; font-size: 0.8rem; }
@@ -55,6 +55,13 @@ function roundTo5(num) {
     return Math.round(num / 5) * 5;
 }
 
+function flashBar(color) {
+    const hpFill = document.getElementById('hpFill');
+    const originalColor = '#4caf50';
+    hpFill.style.backgroundColor = color;
+    setTimeout(() => { hpFill.style.backgroundColor = originalColor; }, 300);
+}
+
 function applyDamageModifier(baseValue) {
     const currentHPInput = document.getElementById('currentHP');
     const mod = document.getElementById('modifier').value;
@@ -67,12 +74,15 @@ function applyDamageModifier(baseValue) {
     if (mod === 'heal') {
         newHP = currentHP + roundTo5(0.25 * totalHP);
         if (newHP > totalHP) newHP = totalHP;
+        flashBar('yellow'); // Flash yellow for healing
     } else if (mod === 'normal') {
         newHP = currentHP - roundTo5(baseValue);
         if (newHP < 0) newHP = 0;
+        flashBar('red'); // Flash red for damage
     } else {
         newHP = currentHP - roundTo5(baseValue + baseValue * parseFloat(mod));
         if (newHP < 0) newHP = 0;
+        flashBar('red'); // Flash red for damage
     }
 
     currentHPInput.value = newHP;
