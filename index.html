@@ -26,14 +26,15 @@
     <option value="heal">+25% Healing</option>
     <option value="0.2">20% Damage</option>
     <option value="0.5">50% Damage</option>
+    <option value="normal">Normal HP Damage</option>
   </select>
 
   <div class="quick-buttons">
-    <button onclick="applyQuickModifier(100)">100</button>
-    <button onclick="applyQuickModifier(200)">200</button>
-    <button onclick="applyQuickModifier(300)">300</button>
-    <button onclick="applyQuickModifier(400)">400</button>
-    <button onclick="applyQuickModifier(500)">500</button>
+    <button onclick="applyQuickModifier(100)">100 HP</button>
+    <button onclick="applyQuickModifier(200)">200 HP</button>
+    <button onclick="applyQuickModifier(300)">300 HP</button>
+    <button onclick="applyQuickModifier(400)">400 HP</button>
+    <button onclick="applyQuickModifier(500)">500 HP</button>
   </div>
 
   <button onclick="applyDamageModifier(2000)">Apply Modifier</button>
@@ -65,6 +66,9 @@ function applyDamageModifier(baseValue) {
     if (mod === 'heal') {
         newHP = undoHP + roundTo5(0.25 * totalHP);
         if (newHP > totalHP) newHP = totalHP;
+    } else if (mod === 'normal') {
+        newHP = undoHP - roundTo5(baseValue);
+        if (newHP < 0) newHP = 0;
     } else {
         newHP = undoHP - roundTo5(baseValue * parseFloat(mod));
         if (newHP < 0) newHP = 0;
