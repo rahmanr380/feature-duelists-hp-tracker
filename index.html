@@ -67,7 +67,8 @@ function roundTo5(num) {
 
 function flashBar(color) {
     const hpFill = document.getElementById('hpFill');
-    const originalColor = '#4caf50';
+    const isHeartbeat = hpFill.classList.contains('heartbeat');
+    const originalColor = isHeartbeat ? 'blue' : '#4caf50';
     hpFill.style.backgroundColor = color;
     setTimeout(() => { hpFill.style.backgroundColor = originalColor; }, 300);
 }
