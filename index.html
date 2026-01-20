@@ -49,6 +49,7 @@
   <button onclick="applyDamageModifier(2000)">Apply Modifier</button>
   <button onclick="confusingParagraph()">Confusing Paragraph Opponent Effect: Heads/Tails - 50% Chance of Success/Failure for Opponent</button>
   <button class="undo-btn" onclick="undoDamage()">Undo</button>
+  <button style="background-color: purple; color: white;" onclick="instantKO()">Ultima Cards Used By Opponent - Instant KO!</button>
 
   <div class="hp-bar">
     <div class="hp-fill" id="hpFill">2000 HP</div>
@@ -148,6 +149,14 @@ function confusingParagraph() {
     } else {
         alert("You're very lucky! You HAVEN'T taken damage upon your opponent using the Confusing Paragraph Spell Card. You may proceed with your turn after your opponent has finished their turn with this card, or if they've played the spell card alongside a Feature Monster card.");
     }
+}
+
+function instantKO() {
+    const currentHPInput = document.getElementById('currentHP');
+    hpHistory.push(parseFloat(currentHPInput.value));
+    currentHPInput.value = 0;
+    updateBar(0);
+    alert('Game Over!');
 }
 </script>
 </body>
