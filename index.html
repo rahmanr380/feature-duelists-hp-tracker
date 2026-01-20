@@ -9,10 +9,19 @@
   .container { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
   input, select, button { width: 100%; padding: 10px; margin: 5px 0; font-size: 1rem; border-radius: 5px; border: 1px solid #ccc; }
   .hp-bar { width: 100%; background: #ddd; border-radius: 5px; overflow: hidden; margin-top: 10px; }
-  .hp-fill { height: 25px; background: #4caf50; width: 100%; text-align: center; color: #fff; line-height: 25px; font-weight: bold; transition: background-color 0.3s; }
+  .hp-fill { height: 25px; background: #4caf50; width: 100%; text-align: center; color: #fff; line-height: 25px; font-weight: bold; transition: background-color 0.3s, box-shadow 0.3s; }
   .undo-btn { background-color: #f44336; color: white; }
   .quick-buttons { display: flex; justify-content: space-between; margin: 5px 0; }
   .quick-buttons button { flex: 1; margin: 0 2px; font-size: 0.8rem; }
+
+  @keyframes heartbeat {
+    0% { box-shadow: 0 0 10px 0 rgba(0,0,255,0.5); }
+    50% { box-shadow: 0 0 20px 5px rgba(0,0,255,0.7); }
+    100% { box-shadow: 0 0 10px 0 rgba(0,0,255,0.5); }
+  }
+  .heartbeat {
+    animation: heartbeat 1s infinite;
+  }
 </style>
 </head>
 <body>
@@ -112,6 +121,14 @@ function updateBar(hp) {
     const percent = (hp / totalHP) * 100;
     hpFill.style.width = percent + '%';
     hpFill.textContent = hp + ' HP';
+
+    if(hp <= 500){
+        hpFill.classList.add('heartbeat');
+        hpFill.style.backgroundColor = 'blue';
+    } else {
+        hpFill.classList.remove('heartbeat');
+        hpFill.style.backgroundColor = '#4caf50';
+    }
 }
 
 function checkWarnings(hp) {
