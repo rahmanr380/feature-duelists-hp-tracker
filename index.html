@@ -24,8 +24,8 @@
   <label>Modifier:</label>
   <select id="modifier">
     <option value="heal">+25% Healing</option>
-    <option value="0.2">20% Damage</option>
-    <option value="0.5">50% Damage</option>
+    <option value="0.2">+20% Increased Damage</option>
+    <option value="0.5">+50% Increased Damage</option>
     <option value="normal">Normal HP Damage</option>
   </select>
 
@@ -70,7 +70,8 @@ function applyDamageModifier(baseValue) {
         newHP = undoHP - roundTo5(baseValue);
         if (newHP < 0) newHP = 0;
     } else {
-        newHP = undoHP - roundTo5(baseValue * parseFloat(mod));
+        // +20% or +50% Increased Damage is now additive on the base value
+        newHP = undoHP - roundTo5(baseValue + baseValue * parseFloat(mod));
         if (newHP < 0) newHP = 0;
     }
 
