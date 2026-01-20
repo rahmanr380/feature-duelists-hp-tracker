@@ -9,7 +9,7 @@
   .container { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
   input, select, button { width: 100%; padding: 10px; margin: 5px 0; font-size: 1rem; border-radius: 5px; border: 1px solid #ccc; }
   .hp-bar { width: 100%; background: #ddd; border-radius: 5px; overflow: hidden; margin-top: 10px; }
-  .hp-fill { height: 25px; background: #4caf50; width: 100%; text-align: center; color: #fff; line-height: 25px; font-weight: bold; transition: width 0.3s, background-color 0.3s; }
+  .hp-fill { height: 25px; background: #4caf50; width: 100%; text-align: center; color: #fff; line-height: 25px; font-weight: bold; transition: background-color 0.3s; }
   .undo-btn { background-color: #f44336; color: white; }
   .quick-buttons { display: flex; justify-content: space-between; margin: 5px 0; }
   .quick-buttons button { flex: 1; margin: 0 2px; font-size: 0.8rem; }
@@ -40,7 +40,6 @@
   <button onclick="applyDamageModifier(2000)">Apply Modifier</button>
   <button onclick="confusingParagraph()">Confusing Paragraph Opponent Effect: Heads/Tails - 50% Chance of Success/Failure for Opponent</button>
   <button class="undo-btn" onclick="undoDamage()">Undo</button>
-  <button style="background-color: purple; color: white;" onclick="instantKO()">Ultima Cards Used By Opponent - Instant KO!</button>
 
   <div class="hp-bar">
     <div class="hp-fill" id="hpFill">2000 HP</div>
@@ -113,7 +112,6 @@ function updateBar(hp) {
     const percent = (hp / totalHP) * 100;
     hpFill.style.width = percent + '%';
     hpFill.textContent = hp + ' HP';
-    hpFill.style.backgroundColor = '#4caf50'; // Always green, no heartbeat animation
 }
 
 function checkWarnings(hp) {
@@ -133,14 +131,6 @@ function confusingParagraph() {
     } else {
         alert("You're very lucky! You HAVEN'T taken damage upon your opponent using the Confusing Paragraph Spell Card. You may proceed with your turn after your opponent has finished their turn with this card, or if they've played the spell card alongside a Feature Monster card.");
     }
-}
-
-function instantKO() {
-    const currentHPInput = document.getElementById('currentHP');
-    hpHistory.push(parseFloat(currentHPInput.value));
-    currentHPInput.value = 0;
-    updateBar(0);
-    alert('Game Over!');
 }
 </script>
 </body>
