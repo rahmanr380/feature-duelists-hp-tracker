@@ -12,7 +12,7 @@
   .hp-fill { height: 25px; background: #4caf50; width: 100%; text-align: center; color: #fff; line-height: 25px; font-weight: bold; }
   .undo-btn { background-color: #f44336; color: white; }
   .quick-buttons { display: flex; justify-content: space-between; margin: 5px 0; }
-  .quick-buttons button { flex: 1; margin: 0 2px; }
+  .quick-buttons button { flex: 1; margin: 0 2px; font-size: 0.8rem; }
 </style>
 </head>
 <body>
@@ -21,32 +21,23 @@
   <label>Current HP:</label>
   <input type="number" id="currentHP" value="2000" min="0" max="2000">
 
-  <label>Attack Value:</label>
-  <select id="attackValue">
-    <option value="100">100</option>
-    <option value="200">200</option>
-    <option value="300">300</option>
-    <option value="400">400</option>
-    <option value="500">500</option>
-  </select>
-
   <label>Modifier:</label>
   <select id="modifier">
-    <option value="1">None</option>
-    <option value="1.2">+20%</option>
-    <option value="1.25">+25%</option>
-    <option value="1.5">+50%</option>
+    <option value="heal">+25% Healing</option>
+    <option value="0.2">20% Damage</option>
+    <option value="0.5">50% Damage</option>
   </select>
 
   <div class="quick-buttons">
-    <button onclick="applyQuick(100,1)">100</button>
-    <button onclick="applyQuick(200,1)">200</button>
-    <button onclick="applyQuick(300,1)">300</button>
-    <button onclick="applyQuick(400,1)">400</button>
-    <button onclick="applyQuick(500,1)">500</button>
+    <button onclick="applyQuickModifier(100)">100</button>
+    <button onclick="applyQuickModifier(200)">200</button>
+    <button onclick="applyQuickModifier(300)">300</button>
+    <button onclick="applyQuickModifier(400)">400</button>
+    <button onclick="applyQuickModifier(500)">500</button>
   </div>
 
-  <button onclick="applyDamage()">Apply Damage</button>
+  <button onclick="applyDamageModifier(2000)">Apply Modifier</button>
+  <button onclick="confusingParagraph()">Confusing Paragraph Opponent Effect: Heads/Tails - 50% Chance of Success/Failure for Opponent</button>
   <button class="undo-btn" onclick="undoDamage()">Undo</button>
 
   <div class="hp-bar">
@@ -58,29 +49,35 @@
 let lastHP = 2000;
 let undoHP = 2000;
 let dangerTriggered = false;
+const totalHP = 2000;
 
 function roundTo5(num) {
     return Math.round(num / 5) * 5;
 }
 
-function applyDamage() {
+function applyDamageModifier(baseValue) {
     const currentHPInput = document.getElementById('currentHP');
-    const attack = parseFloat(document.getElementById('attackValue').value);
-    const modifier = parseFloat(document.getElementById('modifier').value);
+    const mod = document.getElementById('modifier').value;
     undoHP = parseFloat(currentHPInput.value);
-    let damage = roundTo5(attack * modifier);
-    let newHP = undoHP - damage;
-    if (newHP < 0) newHP = 0;
+
+    let newHP = undoHP;
+
+    if (mod === 'heal') {
+        newHP = undoHP + roundTo5(0.25 * totalHP);
+        if (newHP > totalHP) newHP = totalHP;
+    } else {
+        newHP = undoHP - roundTo5(baseValue * parseFloat(mod));
+        if (newHP < 0) newHP = 0;
+    }
+
     lastHP = newHP;
     currentHPInput.value = newHP;
     updateBar(newHP);
     checkWarnings(newHP);
 }
 
-function applyQuick(attackVal, mod) {
-    document.getElementById('attackValue').value = attackVal;
-    document.getElementById('modifier').value = mod;
-    applyDamage();
+function applyQuickModifier(baseValue) {
+    applyDamageModifier(baseValue);
 }
 
 function undoDamage() {
@@ -93,7 +90,7 @@ function undoDamage() {
 
 function updateBar(hp) {
     const hpFill = document.getElementById('hpFill');
-    const percent = (hp / 2000) * 100;
+    const percent = (hp / totalHP) * 100;
     hpFill.style.width = percent + '%';
     hpFill.textContent = hp + ' HP';
 }
@@ -101,10 +98,19 @@ function updateBar(hp) {
 function checkWarnings(hp) {
     if (hp <= 0) {
         alert('Game Over!');
-        dangerTriggered = false; // Reset danger for next game
+        dangerTriggered = false;
     } else if (hp <= 500 && !dangerTriggered) {
         alert('Danger!');
         dangerTriggered = true;
+    }
+}
+
+function confusingParagraph() {
+    const outcome = Math.random() < 0.5 ? 'heads' : 'tails';
+    if (outcome === 'heads') {
+        alert("Oh no! You've taken damage despite your opponent using the Confusing Paragraph Spell Card! Please manually adjust your health to match the Feature Monster's attack number that your opponent used. For example: If they used a Short Sentence Imp, 100 damage would be inflicted to the total player health.");
+    } else {
+        alert("You're very lucky! You HAVEN'T taken damage upon your opponent using the Confusing Paragraph Spell Card. You may proceed with your turn after your opponent has finished their turn with this card, or if they've played the spell card alongside a Feature Monster card.");
     }
 }
 </script>
